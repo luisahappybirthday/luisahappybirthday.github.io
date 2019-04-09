@@ -1,1 +1,371 @@
-Test, this is.
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Luisa, Happy Birthday!</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link href="css/style.css" rel="stylesheet">
+</head>
+
+<body>
+
+<section id="intro" class="feature-section section-into">
+<div class="grid-container">
+<canvas class="intro-fireworks"></canvas>
+<h1 class="ml15">
+    <span class="word">Happy</span>
+    <span class="word">Birthday,</span>
+    <span class="word">Luisa!</span>
+</h1>
+</div>
+</section>
+    
+<section id="final" class="feature-section section-final">
+<div class="grid-container">
+<h1 class="ml7">
+    <span class="text-wrapper">
+        <span class="letters">I wish you</span>
+    </span>
+</h1>
+    <div class="centered">
+    <span class="something-wrapper centere ml12">
+        <span class="letter" style="color:white;">a  </span>
+    </span>
+    </div>
+
+</div>
+</section>
+    
+<script src="lib/anime.js"></script>
+<script src="lib/jquery-3.3.1.js"></script>
+</body>
+
+</html>
+
+<script>
+    
+// intro
+anime.timeline({loop: false})
+  .add({
+    targets: '.ml15 .word',
+    scale: [14,1],
+    opacity: [0,1],
+    easing: "easeOutCirc",
+    duration: 800,
+    delay: function(el, i) {
+      return 1000 * i;
+    }
+  }).finished.then(autoClick);
+
+window.human = false;
+
+var canvasEl = document.querySelector('.intro-fireworks');
+var ctx = canvasEl.getContext('2d');
+var numberOfParticules = 10;
+var pointerX = 0;
+var pointerY = 0;
+var tap = ('ontouchstart' in window || navigator.msMaxTouchPoints) ? 'touchstart' : 'mousedown';
+var colors = ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C'];
+
+function setCanvasSize() {
+  canvasEl.width = window.innerWidth * 2;
+  canvasEl.height = window.innerHeight * 2;
+  canvasEl.style.width = window.innerWidth + 'px';
+  canvasEl.style.height = window.innerHeight + 'px';
+  canvasEl.getContext('2d').scale(2, 2);
+}
+
+function updateCoords(e) {
+  pointerX = e.clientX || e.touches[0].clientX;
+  pointerY = e.clientY || e.touches[0].clientY;
+}
+
+function setParticuleDirection(p) {
+  var angle = anime.random(0, 360) * Math.PI / 180;
+  var value = anime.random(50, 180);
+  var radius = [-1, 1][anime.random(0, 1)] * value;
+  return {
+    x: p.x + radius * Math.cos(angle),
+    y: p.y + radius * Math.sin(angle)
+  }
+}
+
+function createParticule(x,y) {
+  var p = {};
+  p.x = x;
+  p.y = y;
+  p.color = colors[anime.random(0, colors.length - 1)];
+  p.radius = anime.random(16, 32);
+  p.endPos = setParticuleDirection(p);
+  p.draw = function() {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, true);
+    ctx.fillStyle = p.color;
+    ctx.fill();
+  }
+  return p;
+}
+
+function createCircle(x,y) {
+  var p = {};
+  p.x = x;
+  p.y = y;
+  p.color = '#FFF';
+  p.radius = 0.1;
+  p.alpha = .5;
+  p.lineWidth = 6;
+  p.draw = function() {
+    ctx.globalAlpha = p.alpha;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI, true);
+    ctx.lineWidth = p.lineWidth;
+    ctx.strokeStyle = p.color;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+  }
+  return p;
+}
+
+function renderParticule(anim) {
+  for (var i = 0; i < anim.animatables.length; i++) {
+    anim.animatables[i].target.draw();
+  }
+}
+
+function animateParticules(x, y) {
+  var circle = createCircle(x, y);
+  var particules = [];
+  for (var i = 0; i < numberOfParticules; i++) {
+    particules.push(createParticule(x, y));
+  }
+  anime.timeline().add({
+    targets: particules,
+    x: function(p) { return p.endPos.x; },
+    y: function(p) { return p.endPos.y; },
+    radius: 0.1,
+    duration: anime.random(2000, 10000),
+    easing: 'easeOutExpo',
+    update: renderParticule
+  })
+    .add({
+    targets: circle,
+    radius: anime.random(80, 160),
+    lineWidth: 0,
+    alpha: {
+      value: 0,
+      easing: 'linear',
+      duration: anime.random(600, 800),  
+    },
+    duration: anime.random(1200, 1800),
+    easing: 'easeOutExpo',
+    update: renderParticule,
+    offset: 0
+  });
+}
+
+var render = anime({
+  duration: Infinity,
+  update: function() {
+    ctx.clearRect(0, 0, canvasEl.width, canvasEl.height);
+  }
+});
+
+/*
+document.addEventListener(tap, function(e) {
+  window.human = true;
+  render.play();
+  updateCoords(e);
+  animateParticules(pointerX, pointerY);
+}, false);
+*/
+    
+var centerX = window.innerWidth / 2;
+var centerY = window.innerHeight / 2;
+
+function autoClick() {
+  //if (window.human) return;
+  animateParticules(
+    anime.random(window.innerWidth*0.1, window.innerWidth*0.9), 
+    anime.random(window.innerHeight*0.1,window.innerHeight*0.9)
+  );
+  anime({duration: 200}).finished.then(autoClick);
+}
+
+//autoClick();
+setCanvasSize();
+window.addEventListener('resize', setCanvasSize, false);
+    
+    
+// final screen
+function onScroll(cb) {
+  var isTicking = false;
+  var scrollY = 0;
+  var body = document.body;
+  var html = document.documentElement;
+  var scrollHeight = Math.max(body.scrollHeight, body.offsetHeight, html.clientHeight, html.scrollHeight, html.offsetHeight);
+  function scroll() {
+    scrollY = window.scrollY;
+    if (cb) cb(scrollY, scrollHeight);
+    requestTick();
+  }
+  function requestTick() {
+    if (!isTicking) requestAnimationFrame(updateScroll);
+    isTicking = true;
+  }
+  function updateScroll() {
+    isTicking = false;
+    var currentScrollY = scrollY;
+  }
+  scroll();
+  window.onscroll = scroll;
+}
+    
+function scrollToElement(el, offset, cb) {
+  var off = offset || 0;
+  var rect = el.getBoundingClientRect();
+  var top = rect.top + off;
+  var animation = anime({
+    targets: [document.body, document.documentElement],
+    scrollTop: '+='+top,
+    easing: 'easeInOutSine',
+    duration: 1000
+  }).finished.then(cb);
+  // onScroll(animation.pause);
+}
+
+//
+    
+    
+var wishes = 
+    [
+        ["love", "to love", "to be loved"],
+        ["success", "to achieve", "to succeed"],        
+        ["happiness", "to be happy"],
+        ["to inspire others", "to be inspired"],
+        ["to dream", "to fulfill your dreams"],
+        ["to dare", "to try", "to take risks", "to defy the odds"],
+        ["to be strong", "to be courageous", "to be bold"],
+        ["to be yourself"],
+        ["to smile", "always have a reason to smile"],
+        ["to explore", "to play"],
+        ["to travel", "plenty of travel", "exciting adventures"],
+        ["always to have someone to rely on"],
+        ["to understand yourself", "understanding", "to undertand"],
+        ["free time", "plenty of time"],
+        ["mindfulness", "peace of mind"],
+        ["curiosity", "to be curious"],
+        ["to meet people", "best friends", "amazing friends", "always to have someone to rely on"],
+        ["to always be beautiful as you are"],
+        ["brightness", "vividness"],
+        ["priorities", "to prioritize", "to know what’s important"],
+        ["to LIVE Life"],
+        ["to enjoy", "enjoyment", "satisfaction"],
+        ["to be amazing as you are"],
+    ];
+    
+// Wrap every letter in a span
+$('.ml7 .letters').each(function(){
+  $(this).html($(this).text().replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>"));
+});
+console.log("create animat");
+ var finalStringAnimation = anime({
+        targets: '.ml7 .letter',
+        translateY: ["1.1em", 0],
+        translateX: ["0.55em", 0],
+        translateZ: 0,
+        rotateZ: [180, 0],
+        duration: 750,
+        autoplay: false,
+        easing: "easeOutExpo",
+        delay: function(el, i) {
+          return 50 * i;
+        },
+        autoplay: false,
+        endDelay: 1000,
+        complete: function(anim) {
+            console.log("anim");
+            if (anim.completed) {
+                    displaySomething(0);
+            }
+        }
+      });
+
+    
+    
+function animateFinalString() {
+    console.log("animate");
+    finalStringAnimation.play();
+};
+    
+var windowHeight = window.innerHeight;
+var scrollAnim;
+
+function moveControlAnimation() {
+
+}
+
+var ignoreFinalScroll = false;
+
+function displaySomething(i) {
+    
+    var str;
+    if (i < wishes.length) {
+        str = wishes[i][0];
+        ++i;
+    } else {
+        var row = anime.random(0,wishes.length - 1);
+        var column = anime.random(0, wishes[row].length-1);
+        str = wishes[row][column];
+    }
+    
+    $('.ml12').html(str);
+    
+    // Wrap every letter in a span
+$('.ml12').each(function(){
+  $(this).html($(this).text().replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>"));
+});
+
+anime.timeline({loop: false})
+  .add({
+    targets: '.ml12 .letter',
+    translateX: [40,0],
+    translateZ: 0,
+    opacity: [0,1],
+    easing: "easeOutExpo",
+    duration: 1200,
+    endDelay: 1000,
+    delay: function(el, i) {
+      return 500 + 30 * i;
+    }
+  }).add({
+    targets: '.ml12 .letter',
+    translateX: [0,-30],
+    opacity: [1,0],
+    easing: "easeInExpo",
+    duration: 1100,
+    delay: function(el, i) {
+      return 100 + 30 * i;
+    }
+  }).finished.then(function() {displaySomething(i+1)});
+}
+    
+onScroll(function() {
+    if (ignoreFinalScroll) {
+        return;
+    }
+    
+    var timeControlEl = document.getElementById('final');
+    var rect = timeControlEl.getBoundingClientRect();
+    var top = rect.top;
+    var height = rect.height;
+    if (top < windowHeight * 0.7) {
+        ignoreFinalScroll = true;
+        scrollToElement(timeControlEl, 0, animateFinalString);
+    }
+});
+    
+
+
+</script>
