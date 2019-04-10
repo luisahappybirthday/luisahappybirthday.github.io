@@ -11,27 +11,31 @@
 
 <body>
 
-<section id="intro" class="feature-section section-into">
+<section id="intro" class="feature-section section-into" style="background-color: #101040; height:98vh;">
 <div class="grid-container">
-<canvas class="intro-fireworks"></canvas>
-<h1 class="ml15">
+<canvas class="intro-fireworks" style="height:98vh; "></canvas>
+<h1 class="ml15" style="color: azure; font-family: 'ageo';">
     <span class="word">Happy</span>
-    <span class="word">Birthday,</span>
-    <span class="word">Luisa!</span>
+    <span class="word">Birthday</span><span class="word">,</span>
+    <span class="word" style="margin-right: 0px;">Luisa</span><span class="word" style="margin-left: 0px;">!</span>
 </h1>
 </div>
 </section>
     
-<section id="final" class="feature-section section-final">
-<div class="grid-container">
-<h1 class="ml7">
-    <span class="text-wrapper">
+<section id="final" class="feature-section section-final" 
+         style="
+                align-items: flex-start;
+                ">
+<div class="grid-container" style="color: #1e0033;">
+    <div class="final-buffer" style=""></div>
+<h1 class="ml7" style="font-family: 'SCRIPTIN';">
+    <span class="text-wrapper" style="font-size:2em;">
         <span class="letters">I wish you</span>
     </span>
 </h1>
-    <div class="centered">
-    <span class="something-wrapper centere ml12">
-        <span class="letter" style="color:white;">a  </span>
+    <div class="centered" style="align-items: center; width:100vw;">
+    <span class="something-wrapper centered ml12" style="align-items: center; width:100vw; font-family: 'ageo'; font-size: 2em;>
+        <span class="letter" style="color:white;">  </span>
     </span>
     </div>
 
@@ -72,8 +76,8 @@ var colors = ['#FF1461', '#18FF92', '#5A87FF', '#FBF38C'];
 function setCanvasSize() {
   canvasEl.width = window.innerWidth * 2;
   canvasEl.height = window.innerHeight * 2;
-  canvasEl.style.width = window.innerWidth + 'px';
-  canvasEl.style.height = window.innerHeight + 'px';
+  canvasEl.style.width = "100vw;";//window.innerWidth + 'px';
+  canvasEl.style.height = "98vh;"//window.innerHeight + 'px';
   canvasEl.getContext('2d').scale(2, 2);
 }
 
@@ -140,16 +144,7 @@ function animateParticules(x, y) {
   for (var i = 0; i < numberOfParticules; i++) {
     particules.push(createParticule(x, y));
   }
-  anime.timeline().add({
-    targets: particules,
-    x: function(p) { return p.endPos.x; },
-    y: function(p) { return p.endPos.y; },
-    radius: 0.1,
-    duration: anime.random(2000, 10000),
-    easing: 'easeOutExpo',
-    update: renderParticule
-  })
-    .add({
+  anime({
     targets: circle,
     radius: anime.random(80, 160),
     lineWidth: 0,
@@ -159,10 +154,21 @@ function animateParticules(x, y) {
       duration: anime.random(600, 800),  
     },
     duration: anime.random(1200, 1800),
+      delay: anime.random(0, 300),
     easing: 'easeOutExpo',
     update: renderParticule,
     offset: 0
+  })
+      anime({
+    targets: particules,
+    x: function(p) { return p.endPos.x; },
+    y: function(p) { return p.endPos.y; },
+    radius: 0.1,
+    duration: anime.random(2000, 10000),
+    easing: 'easeOutExpo',
+    update: renderParticule
   });
+    
 }
 
 var render = anime({
@@ -172,20 +178,20 @@ var render = anime({
   }
 });
 
-/*
+
 document.addEventListener(tap, function(e) {
   window.human = true;
   render.play();
   updateCoords(e);
   animateParticules(pointerX, pointerY);
 }, false);
-*/
+
     
 var centerX = window.innerWidth / 2;
 var centerY = window.innerHeight / 2;
 
 function autoClick() {
-  //if (window.human) return;
+  if (window.human) return;
   animateParticules(
     anime.random(window.innerWidth*0.1, window.innerWidth*0.9), 
     anime.random(window.innerHeight*0.1,window.innerHeight*0.9)
@@ -225,7 +231,7 @@ function onScroll(cb) {
 function scrollToElement(el, offset, cb) {
   var off = offset || 0;
   var rect = el.getBoundingClientRect();
-  var top = rect.top + off;
+  var top = rect.top + off + 10;
   var animation = anime({
     targets: [document.body, document.documentElement],
     scrollTop: '+='+top,
@@ -252,7 +258,7 @@ var wishes =
         ["to explore", "to play"],
         ["to travel", "plenty of travel", "exciting adventures"],
         ["always to have someone to rely on"],
-        ["to understand yourself", "understanding", "to undertand"],
+        ["to understand yourself", "understanding", "to understand"],
         ["free time", "plenty of time"],
         ["mindfulness", "peace of mind"],
         ["curiosity", "to be curious"],
@@ -264,7 +270,7 @@ var wishes =
         ["to enjoy", "enjoyment", "satisfaction"],
         ["to be amazing as you are"],
     ];
-    
+      
 // Wrap every letter in a span
 $('.ml7 .letters').each(function(){
   $(this).html($(this).text().replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>"));
@@ -272,9 +278,10 @@ $('.ml7 .letters').each(function(){
 console.log("create animat");
  var finalStringAnimation = anime({
         targets: '.ml7 .letter',
-        translateY: ["1.1em", 0],
-        translateX: ["0.55em", 0],
+        translateY: ["5.1em", 0],
+        translateX: ["3.55em", 0],
         translateZ: 0,
+        //fontSize: "1.5em",
         rotateZ: [180, 0],
         duration: 750,
         autoplay: false,
@@ -291,8 +298,6 @@ console.log("create animat");
             }
         }
       });
-
-    
     
 function animateFinalString() {
     console.log("animate");
@@ -308,39 +313,51 @@ function moveControlAnimation() {
 
 var ignoreFinalScroll = false;
 
-function displaySomething(i) {
-    
+function displaySomething(str_id) {
+    console.log(str_id);
     var str;
-    if (i < wishes.length) {
-        str = wishes[i][0];
-        ++i;
+    if (str_id < wishes.length) {
+        str = wishes[str_id][0];
+        ++str_id;
     } else {
         var row = anime.random(0,wishes.length - 1);
         var column = anime.random(0, wishes[row].length-1);
         str = wishes[row][column];
     }
     
-    $('.ml12').html(str);
-    
-    // Wrap every letter in a span
-$('.ml12').each(function(){
-  $(this).html($(this).text().replace(/([^\x00-\x80]|\w)/g, "<span class='letter'>$&</span>"));
-});
+    var html = "<center>";
+    var words = str.split(" ");
+    console.log(words);
+    for (var i = 0; i < words.length; ++i) {
+        html += "<div class='word' style='align-items:center;'>";
+        for (var j = 0; j < words[i].length; ++j) {
+            var infix = " id='abc' ";
+            if (j + 1 != words[i].length) infix = "";
+            html += "<span " + infix + " class='letter'>" + words[i][j] + "</span>";
+        }
+        if (i + 1 != words.lenght) {
+            //html += "<span class='letter' style='width:1em;'>" + "</span>";
+        }
+        html += "</div>";
+    }
+    html += "</center>"
+    console.log(html);
+    $('.ml12').html(html);
 
 anime.timeline({loop: false})
   .add({
-    targets: '.ml12 .letter',
-    translateX: [40,0],
+    targets: ['.ml12 .letter'] ,
+    translateX: [30,0],
     translateZ: 0,
     opacity: [0,1],
     easing: "easeOutExpo",
     duration: 1200,
-    endDelay: 1000,
+    endDelay: 100,
     delay: function(el, i) {
       return 500 + 30 * i;
     }
   }).add({
-    targets: '.ml12 .letter',
+    targets: ['.ml12 .letter'] ,
     translateX: [0,-30],
     opacity: [1,0],
     easing: "easeInExpo",
@@ -348,8 +365,37 @@ anime.timeline({loop: false})
     delay: function(el, i) {
       return 100 + 30 * i;
     }
-  }).finished.then(function() {displaySomething(i+1)});
+  }).finished.then(function() {displaySomething(str_id+1)});
+
 }
+    
+    var coef = 1000;
+    
+anime.timeline({loop: true})
+    .add({
+    targets: '#final',
+    backgroundColor: ["#98FB98", "#FFF8DC"],
+    easing: "linear",
+    duration: anime.random(10*coef, 20*coef)
+})
+        .add({
+    targets: '#final',
+    backgroundColor: ["#FFF8DC", "#AFEEEE"],
+    easing: "linear",
+    duration: anime.random(10*coef, 20*coef)
+})
+    .add({
+    targets: '#final',
+    backgroundColor: ["#AFEEEE", "#fcbcb5"],
+    easing: "linear",
+    duration: anime.random(10*coef, 20*coef)
+})
+    .add({
+    targets: '#final',
+    backgroundColor: ["#fcbcb5", "#98FB98"],
+    easing: "linear",
+    duration: anime.random(10*coef, 20*coef)
+})
     
 onScroll(function() {
     if (ignoreFinalScroll) {

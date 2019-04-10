@@ -10,6 +10,11 @@
   height: 100vh;
 }
 
+.final-buffer {
+    height: 20vh; 
+    width: 100vh; 
+}
+
 .centered {
     align-items: center;
 }
@@ -110,4 +115,21 @@
 .ml12 .letter {
   display: inline-block;
   line-height: 1em;
+}
+
+.ml12 #abc {
+  display: inline-block;
+  line-height: 1em;
+  letter-spacing: 0.0em;
+}
+
+
+@font-face {
+    font-family: 'SCRIPTIN'; /*a name to be used later*/
+    src: url('/fonts/scriptina/SCRIPTIN.ttf'); /*URL to font*/
+}
+
+@font-face {
+    font-family: 'ageo'; /*a name to be used later*/
+    src: url('/fonts/ageo-personal-use/AgeoPersonalUse-Thin.otf'); /*URL to font*/
 }
